@@ -122,7 +122,6 @@ Both runs converge to predictions very close to `[0.01, 0.99]` after 100,000 epo
 ---
 
 
----
 
 ## Notes
 
