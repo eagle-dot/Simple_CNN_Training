@@ -26,6 +26,13 @@ class MinimalNetwork(nn.Module):
 def custom_squared_error(outputs, targets):
     return 0.5 * torch.mean((targets - outputs) ** 2)
 
+def print_weights(model, fmt="+.12f", indent="  "):
+    w, v = model.hidden.weight, model.output.weight
+    print(f"{indent}w1: {w[0,0].item():{fmt}}  w2: {w[0,1].item():{fmt}}")
+    print(f"{indent}w3: {w[1,0].item():{fmt}}  w4: {w[1,1].item():{fmt}}")
+    print(f"{indent}w5: {v[0,0].item():{fmt}}  w6: {v[0,1].item():{fmt}}")
+    print(f"{indent}w7: {v[1,0].item():{fmt}}  w8: {v[1,1].item():{fmt}}")
+
 
 def train_and_infer(label, w_hidden, w_output, batch_size=10, epochs=100000):
     inputs  = torch.tensor([[0.05, 0.10]], dtype=torch.float32).repeat(batch_size, 1)
@@ -37,10 +44,8 @@ def train_and_infer(label, w_hidden, w_output, batch_size=10, epochs=100000):
     print(f"\n{'='*60}")
     print(f"  Run: {label}")
     print(f"{'='*60}")
-    print(f"  Initial  w1={model.hidden.weight[0,0].item():+.4f}  w2={model.hidden.weight[0,1].item():+.4f}  "
-          f"w3={model.hidden.weight[1,0].item():+.4f}  w4={model.hidden.weight[1,1].item():+.4f}")
-    print(f"  Initial  w5={model.output.weight[0,0].item():+.4f}  w6={model.output.weight[0,1].item():+.4f}  "
-          f"w7={model.output.weight[1,0].item():+.4f}  w8={model.output.weight[1,1].item():+.4f}\n")
+    print_weights(model, fmt="+.4f")
+    print()
 
     for _ in range(1, epochs + 1):
         _, final_out = model(inputs)
@@ -50,10 +55,7 @@ def train_and_infer(label, w_hidden, w_output, batch_size=10, epochs=100000):
         optimizer.step()
 
     print(f"  Final parameters after {epochs} epochs:")
-    print(f"    w1: {model.hidden.weight[0,0].item():+.12f}  w2: {model.hidden.weight[0,1].item():+.12f}")
-    print(f"    w3: {model.hidden.weight[1,0].item():+.12f}  w4: {model.hidden.weight[1,1].item():+.12f}")
-    print(f"    w5: {model.output.weight[0,0].item():+.12f}  w6: {model.output.weight[0,1].item():+.12f}")
-    print(f"    w7: {model.output.weight[1,0].item():+.12f}  w8: {model.output.weight[1,1].item():+.12f}")
+    print_weights(model, indent="    ")
 
     model.eval()
     with torch.no_grad():

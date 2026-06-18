@@ -32,6 +32,13 @@ class MinimalNetwork(nn.Module):
 def custom_squared_error(outputs, targets):
     return 0.5 * torch.mean((targets - outputs) ** 2)
 
+def print_weights(model, fmt="+.12f", indent="  "):
+    w, v = model.hidden.weight, model.output.weight
+    print(f"{indent}w1: {w[0,0].item():{fmt}}  w2: {w[0,1].item():{fmt}}")
+    print(f"{indent}w3: {w[1,0].item():{fmt}}  w4: {w[1,1].item():{fmt}}")
+    print(f"{indent}w5: {v[0,0].item():{fmt}}  w6: {v[0,1].item():{fmt}}")
+    print(f"{indent}w7: {v[1,0].item():{fmt}}  w8: {v[1,1].item():{fmt}}")
+
 
 def main():
     # 2. Setup Data and Hyperparameters
@@ -43,8 +50,8 @@ def main():
     optimizer = optim.SGD(model.parameters(), lr=0.5)
 
     print("--- Initial Weights ---")
-    print(f"  Input-to-Hidden:  w1={model.hidden.weight[0, 0].item():+.2f}  w2={model.hidden.weight[0, 1].item():+.2f}  w3={model.hidden.weight[1, 0].item():+.2f}  w4={model.hidden.weight[1, 1].item():+.2f}")
-    print(f"  Hidden-to-Output: w5={model.output.weight[0, 0].item():+.2f}  w6={model.output.weight[0, 1].item():+.2f}  w7={model.output.weight[1, 0].item():+.2f}  w8={model.output.weight[1, 1].item():+.2f}\n")
+    print_weights(model, fmt="+.2f")
+    print()
 
     epochs = 100000
     for epoch in range(1, epochs + 1):
@@ -65,20 +72,16 @@ def main():
 
         if epoch == 1:
             print("--- Updated weights after epoch 1 ---")
-            print(f"  w1: {model.hidden.weight[0, 0].item():+.12f}  w2: {model.hidden.weight[0, 1].item():+.12f}")
-            print(f"  w3: {model.hidden.weight[1, 0].item():+.12f}  w4: {model.hidden.weight[1, 1].item():+.12f}")
-            print(f"  w5: {model.output.weight[0, 0].item():+.12f}  w6: {model.output.weight[0, 1].item():+.12f}")
-            print(f"  w7: {model.output.weight[1, 0].item():+.12f}  w8: {model.output.weight[1, 1].item():+.12f}\n")
+            print_weights(model)
+            print()
 
         if epoch == 1 or epoch % 10 == 0:
             print(f"Epoch {epoch:3d} | Loss: {loss.item():.6f} | "
                   f"out_o1: {final_out[0, 0].item():.6f} | out_o2: {final_out[0, 1].item():.6f}")
 
     print(f"\n--- Final parameters after {epochs} epochs ---")
-    print(f"  w1: {model.hidden.weight[0, 0].item():+.12f}  w2: {model.hidden.weight[0, 1].item():+.12f}")
-    print(f"  w3: {model.hidden.weight[1, 0].item():+.12f}  w4: {model.hidden.weight[1, 1].item():+.12f}")
-    print(f"  w5: {model.output.weight[0, 0].item():+.12f}  w6: {model.output.weight[0, 1].item():+.12f}")
-    print(f"  w7: {model.output.weight[1, 0].item():+.12f}  w8: {model.output.weight[1, 1].item():+.12f}\n")
+    print_weights(model)
+    print()
 
     # Inference
     model.eval()
