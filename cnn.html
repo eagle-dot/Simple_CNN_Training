@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Neural Network Backpropagation Training Walkthrough</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; }
+        h1 { color: #1f4e78; border-bottom: 2px solid #1f4e78; padding-bottom: 8px; }
+        h2 { color: #2e75b6; margin-top: 30px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        h3 { color: #41719c; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; }
+        .equation-block { background: #f9f9f9; border-left: 4px solid #2e75b6; padding: 12px; margin: 15px 0; font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.1em; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; color: #1f4e78; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        hr { border: 0; border-top: 1px solid #ccc; margin: 30px 0; }
+    </style>
+</head>
+<body>
+
+    <h1>Neural Network Backpropagation Training Walkthrough</h1>
+    <p>This document outlines a complete, step-by-step mathematical example of the backpropagation algorithm using a minimal Multi-Layer Perceptron (MLP) architecture.</p>
+
+    <h2>1. Network Architecture & Configuration</h2>
+    <p>The network consists of <strong>4 total neurons</strong>: 2 in a single hidden layer and 2 in the output layer.</p>
+    <ul>
+        <li><strong>Inputs:</strong> x<sub>1</sub> = 0.05, x<sub>2</sub> = 0.10</li>
+        <li><strong>Hidden Layer:</strong> Neurons h<sub>1</sub>, h<sub>2</sub> (with biases b<sub>1</sub> = 0.35)</li>
+        <li><strong>Output Layer:</strong> Neurons o<sub>1</sub>, o<sub>2</sub> (with biases b<sub>2</sub> = 0.60)</li>
+        <li><strong>Targets (Desired Outputs):</strong> t<sub>1</sub> = 0.01, t<sub>2</sub> = 0.99</li>
+        <li><strong>Activation Function:</strong> Sigmoid, &sigma;(z) = 1 / (1 + e<sup>-z</sup>)</li>
+        <li><strong>Learning Rate:</strong> &eta; = 0.5</li>
+    </ul>
+
+    <h3>Initial Weight Allocations</h3>
+    <ul>
+        <li><strong>Input-to-Hidden Weights:</strong> w<sub>1</sub> = 0.15, w<sub>2</sub> = 0.20, w<sub>3</sub> = 0.25, w<sub>4</sub> = 0.30</li>
+        <li><strong>Hidden-to-Output Weights:</strong> w<sub>5</sub> = 0.40, w<sub>6</sub> = 0.45, w<sub>7</sub> = 0.50, w<sub>8</sub> = 0.55</li>
+    </ul>
+
+    <hr>
+
+    <h2>2. The Forward Pass</h2>
+    <p>To begin training, we calculate the total net input to each hidden layer neuron, apply the activation function, and pass the results to the output layer.</p>
+
+    <h3>Hidden Layer Calculations</h3>
+    <div class="equation-block">
+        net<sub>h1</sub> = w<sub>1</sub>x<sub>1</sub> + w<sub>2</sub>x<sub>2</sub> + b<sub>1</sub> = (0.15)(0.05) + (0.20)(0.10) + 0.35 = 0.3775
+    </div>
+    <div class="equation-block">
+        out<sub>h1</sub> = &sigma;(net<sub>h1</sub>) = 1 / (1 + e<sup>-0.3775</sup>) = <strong>0.593265</strong>
+    </div>
+    <div class="equation-block">
+        net<sub>h2</sub> = w<sub>3</sub>x<sub>1</sub> + w<sub>4</sub>x<sub>2</sub> + b<sub>1</sub> = (0.25)(0.05) + (0.30)(0.10) + 0.35 = 0.3925
+    </div>
+    <div class="equation-block">
+        out<sub>h2</sub> = &sigma;(net<sub>h2</sub>) = 1 / (1 + e<sup>-0.3925</sup>) = <strong>0.596884</strong>
+    </div>
+
+    <h3>Output Layer Calculations</h3>
+    <p>Using the outputs of the hidden layer as the new inputs:</p>
+    <div class="equation-block">
+        net<sub>o1</sub> = w<sub>5</sub>out<sub>h1</sub> + w<sub>6</sub>out<sub>h2</sub> + b<sub>2</sub> = (0.40)(0.593265) + (0.45)(0.596884) + 0.60 = 1.105904
+    </div>
+    <div class="equation-block">
+        out<sub>o1</sub> = &sigma;(net<sub>o1</sub>) = 1 / (1 + e<sup>-1.105904</sup>) = <strong>0.751365</strong>
+    </div>
+    <div class="equation-block">
+        net<sub>o2</sub> = w<sub>7</sub>out<sub>h1</sub> + w<sub>8</sub>out<sub>h2</sub> + b<sub>2</sub> = (0.50)(0.593265) + (0.55)(0.596884) + 0.60 = 1.224919
+    </div>
+    <div class="equation-block">
+        out<sub>o2</sub> = &sigma;(net<sub>o2</sub>) = 1 / (1 + e<sup>-1.224919</sup>) = <strong>0.772928</strong>
+    </div>
+
+    <h3>Total Error Calculation (Squared Error)</h3>
+    <div class="equation-block">
+        E<sub>total</sub> = &sum; &frac12; (target - output)<sup>2</sup>
+    </div>
+    <div class="equation-block">
+        E<sub>o1</sub> = &frac12; (0.01 - 0.751365)<sup>2</sup> = 0.274811
+    </div>
+    <div class="equation-block">
+        E<sub>o2</sub> = &frac12; (0.99 - 0.772928)<sup>2</sup> = 0.023560
+    </div>
+    <div class="equation-block">
+        <strong>E<sub>total</sub></strong> = 0.274811 + 0.023560 = <strong>0.298371</strong>
+    </div>
+
+    <hr>
+
+    <h2>3. The Backward Pass (Backpropagation)</h2>
+    <p>The goal of backpropagation is to find the partial derivative of the total error with respect to each weight, allowing us to update the model parameters.</p>
+
+    <h3>Phase 1: Updating Hidden-to-Output Weights (Example: w<sub>5</sub>)</h3>
+    <p>Applying the Chain Rule:</p>
+    <div class="equation-block">
+        &part;E<sub>total</sub> / &part;w<sub>5</sub> = (&part;E<sub>total</sub> / &part;out<sub>o1</sub>) &times; (&part;out<sub>o1</sub> / &part;net<sub>o1</sub>) &times; (&part;net<sub>o1</sub> / &part;w<sub>5</sub>)
+    </div>
+    <ul>
+        <li><strong>Error gradient with respect to output:</strong> &part;E<sub>total</sub> / &part;out<sub>o1</sub> = -(target<sub>1</sub> - out<sub>o1</sub>) = -(0.01 - 0.751365) = 0.741365</li>
+        <li><strong>Output gradient with respect to net input:</strong> &part;out<sub>o1</sub> / &part;net<sub>o1</sub> = out<sub>o1</sub>(1 - out<sub>o1</sub>) = 0.751365(1 - 0.751365) = 0.186816</li>
+        <li><strong>Net input gradient with respect to weight:</strong> &part;net<sub>o1</sub> / &part;w<sub>5</sub> = out<sub>h1</sub> = 0.593265</li>
+    </ul>
+    <p>Multiplying the components together:</p>
+    <div class="equation-block">
+        &part;E<sub>total</sub> / &part;w<sub>5</sub> = 0.741365 &times; 0.186816 &times; 0.593265 = 0.082167
+    </div>
+    <p><strong>Weight Update for w<sub>5</sub>:</strong></p>
+    <div class="equation-block">
+        w<sub>5</sub><sup>new</sup> = w<sub>5</sub> - &eta;(&part;E<sub>total</sub> / &part;w<sub>5</sub>) = 0.40 - (0.5)(0.082167) = <strong>0.358916</strong>
+    </div>
+
+    <hr>
+
+    <h3>Phase 2: Updating Input-to-Hidden Weights (Example: w<sub>1</sub>)</h3>
+    <p>&part;E<sub>total</sub> / &part;w<sub>1</sub> = (&part;E<sub>total</sub> / &part;out<sub>h1</sub>) &times; (&part;out<sub>h1</sub> / &part;net<sub>h1</sub>) &times; (&part;net<sub>h1</sub> / &part;w<sub>1</sub>)</p>
+    
+    <p>First, pooling the downstream output layer errors:</p>
+    <div class="equation-block">
+        &part;E<sub>total</sub> / &part;out<sub>h1</sub> = [(&part;E<sub>o1</sub> / &part;net<sub>o1</sub>) &times; w<sub>5</sub>] + [(&part;E<sub>o2</sub> / &part;net<sub>o2</sub>) &times; w<sub>7</sub>] = 0.055399 + (-0.019030) = 0.036369
+    </div>
+    
+    <p>Next, completing the chain rule components for w<sub>1</sub>:</p>
+    <ul>
+        <li>&part;out<sub>h1</sub> / &part;net<sub>h1</sub> = 0.593265(1 - 0.593265) = 0.241301</li>
+        <li>&part;net<sub>h1</sub> / &part;w<sub>1</sub> = x<sub>1</sub> = 0.05</li>
+    </ul>
+    <div class="equation-block">
+        &part;E<sub>total</sub> / &part;w<sub>1</sub> = 0.036369 &times; 0.241301 &times; 0.05 = 0.0004388
+    </div>
+    <p><strong>Weight Update for w<sub>1</sub>:</strong></p>
+    <div class="equation-block">
+        w<sub>1</sub><sup>new</sup> = w<sub>1</sub> - &eta;(&part;E<sub>total</sub> / &part;w<sub>1</sub>) = 0.15 - (0.5)(0.0004388) = <strong>0.149780</strong>
+    </div>
+
+    <hr>
+
+    <h2>4. Summary of Parameter Adjustments</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Weight Parameter</th>
+                <th>Initial Value</th>
+                <th>Value After 1 Epoch</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>w<sub>1</sub></strong> (Input Layer &rarr; Hidden Layer)</td>
+                <td>0.15</td>
+                <td>0.149780</td>
+            </tr>
+            <tr>
+                <td><strong>w<sub>5</sub></strong> (Hidden Layer &rarr; Output Layer)</td>
+                <td>0.40</td>
+                <td>0.358916</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>5. Architectural Clarification</h2>
+    <ul>
+        <li><strong>Layer Count:</strong> This is structurally classified as a <strong>2-layer neural network</strong> because it features two distinct layers containing trainable parameters (the hidden layer and the output layer). The input layer contains no weights and is omitted from the formal layer count.</li>
+        <li><strong>CNN Distinctions:</strong> While this network maps inputs to predictions, it is a standard Fully Connected Network (MLP) and <strong>not</strong> a Convolutional Neural Network (CNN). Converting this design into a true CNN would require structural additions such as Convolutional Layers (applying specialized kernels to capture spatial/temporal features) and Pooling Layers (such as Max Pooling) to downsample features before passing data into fully connected output nodes.</li>
+    </ul>
+
+</body>
+</html>
