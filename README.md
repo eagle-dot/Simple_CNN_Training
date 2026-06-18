@@ -103,6 +103,8 @@ The script prints:
 ---
 
 ## Notes
+Clck the following for a better view
+https://eagle-dot.github.io/Simple_CNN_Training/cnn.html
 
 - This is a **fully connected MLP**, not a CNN despite the filename. Converting to a true CNN would require convolutional layers (spatial kernels) and pooling layers before the fully connected output.
 - The loss function uses `0.5 × mean((target − output)²)` so gradient magnitude stays consistent regardless of batch size.
