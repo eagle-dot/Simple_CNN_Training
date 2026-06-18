@@ -90,15 +90,33 @@ w₁_new = 0.15 − (0.5)(0.0004388) = 0.149780
 
 ```bash
 pip install torch
+
+# Step-by-step single training run (textbook weights)
 python simple_cnn_1.py
+
+# Compare two different weight initializations
+python simple_cnn_2.py
 ```
 
-The script prints:
+### simple_cnn_1.py
+Single training run using the original textbook weights. Prints:
 - Initial weights
 - First-epoch hidden and output activations
 - Updated weights after epoch 1
 - Loss at every 10th epoch
 - Final weights and inference result after full training
+
+### simple_cnn_2.py
+Runs the same training twice with **two different weight initializations** to demonstrate that the loss surface has multiple valid solutions.
+
+| | Init A (textbook) | Init B (different) |
+|---|---|---|
+| w₁, w₂ | 0.15, 0.20 | 0.80, 0.10 |
+| w₃, w₄ | 0.25, 0.30 | 0.60, 0.40 |
+| w₅, w₆ | 0.40, 0.45 | 0.20, 0.70 |
+| w₇, w₈ | 0.50, 0.55 | 0.30, 0.90 |
+
+Both runs converge to predictions very close to `[0.01, 0.99]` after 100,000 epochs, but arrive at **completely different final weight matrices**. This confirms that for a single training example, many weight configurations can satisfy the target — gradient descent finds one valid solution, not the only solution.
 
 ---
 
@@ -107,3 +125,13 @@ The script prints:
 - This is a **fully connected MLP**, not a CNN despite the filename. Converting to a true CNN would require convolutional layers (spatial kernels) and pooling layers before the fully connected output.
 - The loss function uses `0.5 × mean((target − output)²)` so gradient magnitude stays consistent regardless of batch size.
 - Different weight initializations converge to different final weight matrices, but all produce predictions close to `[0.01, 0.99]` — demonstrating that the loss surface has multiple valid solutions.
+- Click the following for a better view: https://eagle-dot.github.io/Simple_CNN_Training/cnn.html
+
+---
+
+## Acknowledgement
+
+The example was extracted from
+https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+PyTorch is used for the simple implementation.
