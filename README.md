@@ -122,13 +122,6 @@ Both runs converge to predictions very close to `[0.01, 0.99]` after 100,000 epo
 ---
 
 
-### simple_cnn_1.py
-Single training run using the original textbook weights. Prints:
-- Initial weights
-- First-epoch hidden and output activations
-- Updated weights after epoch 1
-- Loss at every 10th epoch
-- Final weights and inference result after full training
 
 ### simple_cnn_2.py
 Runs the same training twice with **two different weight initializations** to demonstrate that the loss surface has multiple valid solutions.
