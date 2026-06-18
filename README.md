@@ -122,19 +122,6 @@ Both runs converge to predictions very close to `[0.01, 0.99]` after 100,000 epo
 ---
 
 
-
-### simple_cnn_2.py
-Runs the same training twice with **two different weight initializations** to demonstrate that the loss surface has multiple valid solutions.
-
-| | Init A (textbook) | Init B (different) |
-|---|---|---|
-| w₁, w₂ | 0.15, 0.20 | 0.80, 0.10 |
-| w₃, w₄ | 0.25, 0.30 | 0.60, 0.40 |
-| w₅, w₆ | 0.40, 0.45 | 0.20, 0.70 |
-| w₇, w₈ | 0.50, 0.55 | 0.30, 0.90 |
-
-Both runs converge to predictions very close to `[0.01, 0.99]` after 100,000 epochs, but arrive at **completely different final weight matrices**. This confirms that for a single training example, many weight configurations can satisfy the target — gradient descent finds one valid solution, not the only solution.
-
 ---
 
 ## Notes
