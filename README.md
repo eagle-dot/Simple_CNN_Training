@@ -116,3 +116,5 @@ https://eagle-dot.github.io/Simple_CNN_Training/cnn.html
 ## Acknowledgement 
 The example was extracted from 
 https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+PyTorch is used for the simple implementation.  
